@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:noteappfirebase/note_model_page.dart';
 
 class AddNote extends StatefulWidget {
   @override
@@ -81,10 +82,20 @@ class _AddNoteState extends State<AddNote> {
       height: 56.0,
       child: RaisedButton(
         onPressed: () {
+          //TODO: Progress show
+
           if (_formKey.currentState.validate()) {
             debugPrint(_titleController.text);
             debugPrint(_noteController.text);
-            _addNoteFirebase(_titleController.text, _noteController.text);
+            DateTime today = new DateTime.now();
+            String dateSlug =
+                "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+            NoteModel noteModel = NoteModel(
+                title: _titleController.text,
+                note: _noteController.text,
+                date: dateSlug);
+            _addNoteFirebase(noteModel);
           }
           /*else {
             debugPrint("else");
@@ -116,26 +127,31 @@ class _AddNoteState extends State<AddNote> {
     );
   }
 
-  int lengthNote() {
-    var noteId = 0;
-    _firestore.collection("users").getDocuments().then((querySnapshots) {
-      noteId = querySnapshots.documents.length;
-    });
-    return noteId;
-  }
-
-  void _addNoteFirebase(String title, String note) async {
+  void _addNoteFirebase(NoteModel noteModel) async {
     final FirebaseUser user = await _auth.currentUser();
     final uid = user.uid;
-    var noteCont = lengthNote() + 1;
 
-    _firestore
+    final docRef = _firestore
         .collection("users")
         .document(uid)
         .collection("Notes")
-        .document("Note" + noteCont.toString())
-        .setData({'title': title, 'note': note},
-            merge: true).whenComplete(() => debugPrint(title + ":D"));
+        .document();
+
+    docRef
+        .setData({
+          'id': docRef.documentID,
+          'date': noteModel.date,
+          'title': noteModel.title,
+          'note': noteModel.note
+        }, merge: true)
+        .whenComplete(() => debugPrint(noteModel.title + ":D")
+            //TODO: navigaet to note list
+            //TODO: Show feedback
+            )
+        .catchError((onError) {
+          debugPrint(onError);
+          //TODO: Hide progress
+        });
 
     /*   DocumentSnapshot documentSnapshot =
         await _firestore.document("users/$uid").get();

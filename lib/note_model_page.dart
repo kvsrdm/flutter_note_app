@@ -6,5 +6,5 @@ class NoteModel {
   String note;
   String date;
 
-  NoteModel.name(this.id, this.title, this.note, this.date);
+  NoteModel({this.id, this.title, this.note, this.date});
 }
