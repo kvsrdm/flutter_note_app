@@ -21,6 +21,9 @@ class _NoteReadState extends State<NoteRead> {
 
   @override
   Widget build(BuildContext context) {
+    _titleController.text = widget.noteModel.title;
+    _noteController.text = widget.noteModel.note;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -60,20 +63,20 @@ class _NoteReadState extends State<NoteRead> {
                         readOnly: readableText,
                         controller: _titleController,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            /*enabledBorder: OutlineInputBorder(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          /*enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1.0),
                           ),*/
-                            /*focusedBorder: OutlineInputBorder(
+                          /*focusedBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1.0),
                           ),*/
-                            hintText: 'Başlık',
-                            labelText: widget.noteModel.title),
+                          hintText: 'Başlık',
+                        ),
                       ),
                       SizedBox(height: 20),
                       TextField(
@@ -82,12 +85,12 @@ class _NoteReadState extends State<NoteRead> {
                         keyboardType: TextInputType.multiline,
                         maxLines: 10,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            hintText: 'Not',
-                            labelText: widget.noteModel.note),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          hintText: 'Not',
+                        ),
                       ),
                       SizedBox(height: 20),
                       //buildButtonContainer(),
