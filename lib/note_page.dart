@@ -22,54 +22,58 @@ class _NotePageState extends State<NotePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 120,
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 5,
-                    margin: EdgeInsets.all(10),
-                    color: Color(0xFFf7f7f7),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(width: 15),
-                        Icon(Icons.note, color: Colors.deepPurple),
-                        Spacer(),
-                        Text(list[index].title),
-                        Spacer(),
-                        Text(list[index].date),
-                        SizedBox(width: 15),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              itemCount: list == null ? 0 : list.length,
-              // itemCount: list.length = 2,
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      height: 120,
+                      child: Card(
+                        semanticContainer: true,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 5,
+                        margin: EdgeInsets.all(10),
+                        color: Color(0xFFf7f7f7),
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 15),
+                            Icon(Icons.note, color: Colors.deepPurple),
+                            Spacer(),
+                            Text(list[index].title),
+                            Spacer(),
+                            Text(list[index].date),
+                            SizedBox(width: 15),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: list == null ? 0 : list.length,
+                  // itemCount: list.length = 2,
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddNote()));
-        },
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => AddNote()));
+          },
+        ),
       ),
     );
   }
