@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class NoteModel {
   String id;
   String title;
@@ -7,4 +5,17 @@ class NoteModel {
   String date;
 
   NoteModel({this.id, this.title, this.note, this.date});
+/*
+  String get titleVal => title;
+
+  set titleValue(String value) {
+    title = value;
+  }
+
+  String get dateVal => date;
+
+  set dateValue(String value) {
+    date = value;
+  }*/
+
 }

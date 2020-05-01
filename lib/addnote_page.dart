@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noteappfirebase/note_model_page.dart';
+import 'package:noteappfirebase/note_page.dart';
 
 class AddNote extends StatefulWidget {
   @override
@@ -96,6 +97,9 @@ class _AddNoteState extends State<AddNote> {
                 note: _noteController.text,
                 date: dateSlug);
             _addNoteFirebase(noteModel);
+
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => NotePage()));
           }
           /*else {
             debugPrint("else");
@@ -152,6 +156,8 @@ class _AddNoteState extends State<AddNote> {
           debugPrint(onError);
           //TODO: Hide progress
         });
+
+///////////////////////
 
     /*   DocumentSnapshot documentSnapshot =
         await _firestore.document("users/$uid").get();
