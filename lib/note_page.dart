@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_fader/flutter_fader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'addnote_page.dart';
@@ -10,7 +11,8 @@ class NotePage extends StatefulWidget {
   _NotePageState createState() => _NotePageState();
 }
 
-class _NotePageState extends State<NotePage> {
+class _NotePageState extends State<NotePage>
+    with SingleTickerProviderStateMixin {
   List<NoteModel> list = List();
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,36 +20,12 @@ class _NotePageState extends State<NotePage> {
   ScrollController _hideButtonController;
   var _isVisible;
 
+  FaderController faderController = new FaderController();
+
   @override
   void initState() {
     getList();
-    _isVisible = true;
-    _hideButtonController = ScrollController();
-    _hideButtonController.addListener(() {
-      if (_hideButtonController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (_isVisible == true) {
-          /* only set when the previous state is false
-             * Less widget rebuilds
-             */
-          print("**** ${_isVisible} up"); //Move IO away from setState
-          setState(() {
-            _isVisible = false;
-          });
-        }
-      } else if (_hideButtonController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (_isVisible == false) {
-          /* only set when the previous state is false
-               * Less widget rebuilds
-               */
-          print("**** ${_isVisible} down"); //Move IO away from setState
-          setState(() {
-            _isVisible = true;
-          });
-        }
-      }
-    });
+    floatingActionButtonAnimation();
     super.initState();
   }
 
@@ -113,8 +91,20 @@ class _NotePageState extends State<NotePage> {
                 context, MaterialPageRoute(builder: (context) => AddNote()));
           },
         ),*/
-        floatingActionButton: Visibility(
+        /* floatingActionButton: Visibility(
           visible: _isVisible,
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => AddNote()));
+            },
+          ),
+        ),*/
+
+        floatingActionButton: Fader(
+          controller: faderController,
+          duration: const Duration(milliseconds: 280),
           child: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () {
@@ -144,6 +134,30 @@ class _NotePageState extends State<NotePage> {
         setState(() {
           list.add(titleDate);
         });
+      }
+    });
+  }
+
+  void floatingActionButtonAnimation() {
+    _isVisible = true;
+    _hideButtonController = ScrollController();
+
+    _hideButtonController.addListener(() {
+      if (_hideButtonController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        faderController.fadeOut();
+        /* if (_isVisible == true) {
+          */ /* only set when the previous state is false
+             * Less widget rebuilds
+             */ /*
+          print("**** ${_isVisible} up"); //Move IO away from setState
+          setState(() {
+            _isVisible = false;
+          });
+        }*/
+      } else if (_hideButtonController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        faderController.fadeIn();
       }
     });
   }
