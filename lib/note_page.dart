@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'addnote_page.dart';
 import 'note_model_page.dart';
 
@@ -14,9 +15,39 @@ class _NotePageState extends State<NotePage> {
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  ScrollController _hideButtonController;
+  var _isVisible;
+
   @override
   void initState() {
     getList();
+    _isVisible = true;
+    _hideButtonController = ScrollController();
+    _hideButtonController.addListener(() {
+      if (_hideButtonController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_isVisible == true) {
+          /* only set when the previous state is false
+             * Less widget rebuilds
+             */
+          print("**** ${_isVisible} up"); //Move IO away from setState
+          setState(() {
+            _isVisible = false;
+          });
+        }
+      } else if (_hideButtonController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (_isVisible == false) {
+          /* only set when the previous state is false
+               * Less widget rebuilds
+               */
+          print("**** ${_isVisible} down"); //Move IO away from setState
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      }
+    });
     super.initState();
   }
 
@@ -29,11 +60,19 @@ class _NotePageState extends State<NotePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+              child: Text(
+                "Notlar",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+              ),
+            ),
             Expanded(
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: ListView.builder(
+                  controller: _hideButtonController,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       height: 120,
@@ -67,12 +106,22 @@ class _NotePageState extends State<NotePage> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /* floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => AddNote()));
           },
+        ),*/
+        floatingActionButton: Visibility(
+          visible: _isVisible,
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => AddNote()));
+            },
+          ),
         ),
       ),
     );
