@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class NoteModel {
   String id;
   String title;

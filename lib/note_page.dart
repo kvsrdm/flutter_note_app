@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'addnote_page.dart';
 import 'note_model_page.dart';
+import 'readnote_page.dart';
 
 class NotePage extends StatefulWidget {
   @override
@@ -18,8 +19,6 @@ class _NotePageState extends State<NotePage>
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ScrollController _hideButtonController;
-  var _isVisible;
-
   FaderController faderController = new FaderController();
 
   @override
@@ -54,25 +53,33 @@ class _NotePageState extends State<NotePage>
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       height: 120,
-                      child: Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        elevation: 5,
-                        margin: EdgeInsets.all(10),
-                        color: Color(0xFFf7f7f7),
-                        child: Row(
-                          children: <Widget>[
-                            SizedBox(width: 15),
-                            Icon(Icons.note, color: Colors.deepPurple),
-                            Spacer(),
-                            Text(list[index].title),
-                            Spacer(),
-                            Text(list[index].date),
-                            SizedBox(width: 15),
-                          ],
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NoteRead(list[index])));
+                        },
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 5,
+                          margin: EdgeInsets.all(10),
+                          color: Color(0xFFf7f7f7),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(width: 15),
+                              Icon(Icons.note, color: Colors.deepPurple),
+                              Spacer(),
+                              Text(list[index].title),
+                              Spacer(),
+                              Text(list[index].date),
+                              SizedBox(width: 15),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -84,24 +91,6 @@ class _NotePageState extends State<NotePage>
             ),
           ],
         ),
-        /* floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => AddNote()));
-          },
-        ),*/
-        /* floatingActionButton: Visibility(
-          visible: _isVisible,
-          child: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AddNote()));
-            },
-          ),
-        ),*/
-
         floatingActionButton: Fader(
           controller: faderController,
           duration: const Duration(milliseconds: 280),
@@ -129,6 +118,7 @@ class _NotePageState extends State<NotePage>
       for (int i = 0; i < querySnapshots.documents.length; i++) {
         NoteModel titleDate = NoteModel(
             title: querySnapshots.documents[i].data['title'].toString(),
+            note: querySnapshots.documents[i].data['note'].toString(),
             date: querySnapshots.documents[i].data['date'].toString());
 
         setState(() {
@@ -139,22 +129,12 @@ class _NotePageState extends State<NotePage>
   }
 
   void floatingActionButtonAnimation() {
-    _isVisible = true;
     _hideButtonController = ScrollController();
 
     _hideButtonController.addListener(() {
       if (_hideButtonController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         faderController.fadeOut();
-        /* if (_isVisible == true) {
-          */ /* only set when the previous state is false
-             * Less widget rebuilds
-             */ /*
-          print("**** ${_isVisible} up"); //Move IO away from setState
-          setState(() {
-            _isVisible = false;
-          });
-        }*/
       } else if (_hideButtonController.position.userScrollDirection ==
           ScrollDirection.forward) {
         faderController.fadeIn();
