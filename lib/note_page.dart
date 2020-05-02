@@ -6,14 +6,15 @@ import 'package:flutter/rendering.dart';
 import 'addnote_page.dart';
 import 'note_model_page.dart';
 import 'readnote_page.dart';
+import 'package:flutter/foundation.dart';
 
 class NotePage extends StatefulWidget {
   @override
-  _NotePageState createState() => _NotePageState();
+  NotePageState createState() => NotePageState();
 }
 
-class _NotePageState extends State<NotePage>
-    with SingleTickerProviderStateMixin {
+class NotePageState extends State<NotePage>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   List<NoteModel> list = List();
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,10 +24,45 @@ class _NotePageState extends State<NotePage>
 
   @override
   void initState() {
+    list = List();
     getList();
     floatingActionButtonAnimation();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+/*  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        */ /*getList();*/ /*
+        break;
+      case AppLifecycleState.inactive:
+        debugPrint("inactive çalıştı");
+        break;
+      case AppLifecycleState.paused:
+        debugPrint("paused çalıştı");
+        break;
+      case AppLifecycleState.detached:
+        debugPrint("detached çalıştı");
+        // TODO: Handle this case.
+        break;
+    }
+  }*/
+
+  /* @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    debugPrint("Resume çalıştı");
+    getList();
+    super.didChangeDependencies();
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +93,7 @@ class _NotePageState extends State<NotePage>
                       height: 120,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NoteRead(list[index])));
+                          moveToNote(index);
                         },
                         child: Card(
                           semanticContainer: true,
@@ -111,6 +144,8 @@ class _NotePageState extends State<NotePage>
   getList() async {
     final FirebaseUser user = await _auth.currentUser();
     final uid = user.uid;
+    List<NoteModel> noteList = List();
+
     _firestore
         .collection("users")
         .document(uid)
@@ -123,11 +158,12 @@ class _NotePageState extends State<NotePage>
             title: querySnapshots.documents[i].data['title'].toString(),
             note: querySnapshots.documents[i].data['note'].toString(),
             date: querySnapshots.documents[i].data['date'].toString());
-
-        setState(() {
-          list.add(titleDate);
-        });
+        noteList.add(titleDate);
       }
+
+      setState(() {
+        list = noteList;
+      });
     });
   }
 
@@ -143,5 +179,15 @@ class _NotePageState extends State<NotePage>
         faderController.fadeIn();
       }
     });
+  }
+
+  void moveToNote(int index) async {
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => NoteRead(list[index])));
+    debugPrint(result.toString());
+
+    if (result) {
+      getList();
+    }
   }
 }

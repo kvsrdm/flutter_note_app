@@ -8,6 +8,7 @@ class NoteRead extends StatefulWidget {
   final NoteModel noteModel;
 
   NoteRead(this.noteModel);
+  final notePage = NotePageState();
 
   @override
   _NoteReadState createState() => _NoteReadState();
@@ -29,6 +30,8 @@ class _NoteReadState extends State<NoteRead> {
   var _id;
   var date;
 
+  bool willUpdate = false;
+
   @override
   void initState() {
     _titleController.text = widget.noteModel.title;
@@ -40,92 +43,98 @@ class _NoteReadState extends State<NoteRead> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          color: Color(0xFFfff),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 60, left: 30, right: 30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Stack(
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  readableText = false;
-                                  _isVisibleButton = true;
-                                  editIcon = false;
-                                  deleteIcon = true;
-                                });
-                                debugPrint("düzenleme aktif");
-                              },
-                              child: Visibility(
-                                visible: editIcon,
-                                child: Icon(Icons.edit,
-                                    size: 30, color: Colors.deepPurple),
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context, willUpdate);
+        return new Future(() => false);
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Container(
+            color: Color(0xFFfff),
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 60, left: 30, right: 30),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topRight,
+                          child: Stack(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    readableText = false;
+                                    _isVisibleButton = true;
+                                    editIcon = false;
+                                    deleteIcon = true;
+                                  });
+                                  debugPrint("düzenleme aktif");
+                                },
+                                child: Visibility(
+                                  visible: editIcon,
+                                  child: Icon(Icons.edit,
+                                      size: 30, color: Colors.deepPurple),
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 30),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  //TODO: Delete button
-                                  //Alet dialog silmek istediğindn emin misin
-                                  // delete databaseden
-                                  //not sayfasına yönlendir
-                                });
-                              },
-                              child: Visibility(
-                                visible: deleteIcon,
-                                child: Icon(Icons.delete,
-                                    size: 30, color: Colors.deepPurple),
+                              SizedBox(width: 30),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    //TODO: Delete button
+                                    //Alet dialog silmek istediğindn emin misin
+                                    // delete databaseden
+                                    //not sayfasına yönlendir
+                                  });
+                                },
+                                child: Visibility(
+                                  visible: deleteIcon,
+                                  child: Icon(Icons.delete,
+                                      size: 30, color: Colors.deepPurple),
+                                ),
                               ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          readOnly: readableText,
+                          controller: _titleController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        readOnly: readableText,
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
+                            hintText: 'Başlık',
                           ),
-                          hintText: 'Başlık',
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      TextField(
-                        readOnly: readableText,
-                        controller: _noteController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 10,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
+                        SizedBox(height: 20),
+                        TextField(
+                          readOnly: readableText,
+                          controller: _noteController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 10,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            hintText: 'Not',
                           ),
-                          hintText: 'Not',
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      buildButtonContainer(),
-                    ],
+                        SizedBox(height: 20),
+                        buildButtonContainer(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -200,7 +209,7 @@ class _NoteReadState extends State<NoteRead> {
       'title': noteModel.title,
       'note': noteModel.note
     }).then((v) {
-      debugPrint("Veriler Güncellendi");
+      willUpdate = true;
     });
   }
 }
