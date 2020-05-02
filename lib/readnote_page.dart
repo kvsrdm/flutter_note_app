@@ -16,18 +16,30 @@ class NoteRead extends StatefulWidget {
 class _NoteReadState extends State<NoteRead> {
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _noteController = new TextEditingController();
+
+  final Firestore _firestore = Firestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   var readableText = true;
   var _isVisibleButton = false;
   var editIcon = true;
   var deleteIcon = false;
 
   final _formKey = GlobalKey<FormState>();
+  var _id;
+  var date;
+
+  @override
+  void initState() {
+    _titleController.text = widget.noteModel.title;
+    _noteController.text = widget.noteModel.note;
+    _id = widget.noteModel.id;
+    date = widget.noteModel.date;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = widget.noteModel.title;
-    _noteController.text = widget.noteModel.note;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -45,8 +57,6 @@ class _NoteReadState extends State<NoteRead> {
                       Container(
                         alignment: Alignment.topRight,
                         child: Stack(
-                          /*  mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,*/
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
@@ -65,10 +75,20 @@ class _NoteReadState extends State<NoteRead> {
                               ),
                             ),
                             SizedBox(width: 30),
-                            Visibility(
-                              visible: deleteIcon,
-                              child: Icon(Icons.delete,
-                                  size: 30, color: Colors.deepPurple),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  //TODO: Delete button
+                                  //Alet dialog silmek istediğindn emin misin
+                                  // delete databaseden
+                                  //not sayfasına yönlendir
+                                });
+                              },
+                              child: Visibility(
+                                visible: deleteIcon,
+                                child: Icon(Icons.delete,
+                                    size: 30, color: Colors.deepPurple),
+                              ),
                             ),
                           ],
                         ),
@@ -82,14 +102,6 @@ class _NoteReadState extends State<NoteRead> {
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          /*enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),*/
-                          /*focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),*/
                           hintText: 'Başlık',
                         ),
                       ),
@@ -132,7 +144,21 @@ class _NoteReadState extends State<NoteRead> {
               _isVisibleButton = false;
               editIcon = true;
               deleteIcon = false;
-              //TODO: kayıt güncellenecek
+              setState(() {
+                if (_formKey.currentState.validate()) {
+                  debugPrint(_titleController.text);
+                  debugPrint(_noteController.text);
+                  DateTime today = new DateTime.now();
+                  String dateSlug =
+                      "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+                  NoteModel noteModel = NoteModel(
+                      title: _titleController.text,
+                      note: _noteController.text,
+                      date: dateSlug);
+                  _updateNoteFirebase(noteModel);
+                }
+              });
             });
           },
           shape: RoundedRectangleBorder(
@@ -156,5 +182,25 @@ class _NoteReadState extends State<NoteRead> {
         ),
       ),
     );
+  }
+
+  void _updateNoteFirebase(NoteModel noteModel) async {
+    final FirebaseUser user = await _auth.currentUser();
+    final uid = user.uid;
+
+    final docRef = _firestore
+        .collection("users")
+        .document(uid)
+        .collection("Notes")
+        .document(widget.noteModel.id);
+
+    docRef.updateData({
+      'id': _id,
+      'date': noteModel.date,
+      'title': noteModel.title,
+      'note': noteModel.note
+    }).then((v) {
+      debugPrint("Veriler Güncellendi");
+    });
   }
 }

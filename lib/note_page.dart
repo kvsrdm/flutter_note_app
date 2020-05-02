@@ -48,6 +48,8 @@ class _NotePageState extends State<NotePage>
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
+
+                //Refresh listview
                 child: ListView.builder(
                   controller: _hideButtonController,
                   itemBuilder: (BuildContext context, int index) {
@@ -117,6 +119,7 @@ class _NotePageState extends State<NotePage>
         .then((querySnapshots) {
       for (int i = 0; i < querySnapshots.documents.length; i++) {
         NoteModel titleDate = NoteModel(
+            id: querySnapshots.documents[i].data['id'].toString(),
             title: querySnapshots.documents[i].data['title'].toString(),
             note: querySnapshots.documents[i].data['note'].toString(),
             date: querySnapshots.documents[i].data['date'].toString());
