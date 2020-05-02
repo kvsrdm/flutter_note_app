@@ -112,10 +112,7 @@ class _AddNoteState extends State<AddNote> {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
-            gradient: LinearGradient(
-                colors: [Color(0xFF7e87d2), Color(0xFFe99fde)],
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft),
+            color: Colors.deepPurple,
           ),
           child: Center(
             child: Text(

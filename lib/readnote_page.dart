@@ -6,6 +6,7 @@ import 'package:noteappfirebase/note_page.dart';
 
 class NoteRead extends StatefulWidget {
   final NoteModel noteModel;
+
   NoteRead(this.noteModel);
 
   @override
@@ -16,6 +17,9 @@ class _NoteReadState extends State<NoteRead> {
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _noteController = new TextEditingController();
   var readableText = true;
+  var _isVisibleButton = false;
+  var editIcon = true;
+  var deleteIcon = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -40,21 +44,32 @@ class _NoteReadState extends State<NoteRead> {
                     children: <Widget>[
                       Container(
                         alignment: Alignment.topRight,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        child: Stack(
+                          /*  mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,*/
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
-                                /* final instance = NotePageState();
-                                instance.getList()[3];*/
+                                setState(() {
+                                  readableText = false;
+                                  _isVisibleButton = true;
+                                  editIcon = false;
+                                  deleteIcon = true;
+                                });
+                                debugPrint("düzenleme aktif");
                               },
-                              child: Icon(Icons.edit,
-                                  size: 30, color: Colors.deepPurple),
+                              child: Visibility(
+                                visible: editIcon,
+                                child: Icon(Icons.edit,
+                                    size: 30, color: Colors.deepPurple),
+                              ),
                             ),
                             SizedBox(width: 30),
-                            Icon(Icons.delete,
-                                size: 30, color: Colors.deepPurple),
+                            Visibility(
+                              visible: deleteIcon,
+                              child: Icon(Icons.delete,
+                                  size: 30, color: Colors.deepPurple),
+                            ),
                           ],
                         ),
                       ),
@@ -93,7 +108,7 @@ class _NoteReadState extends State<NoteRead> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      //buildButtonContainer(),
+                      buildButtonContainer(),
                     ],
                   ),
                 ),
@@ -105,47 +120,41 @@ class _NoteReadState extends State<NoteRead> {
     );
   }
 
-/*  Widget buildButtonContainer() {
-    return Container(
-      height: 56.0,
-      child: RaisedButton(
-        onPressed: () {
-          //TODO: Progress show
-
-          */ /*    if (_formKey.currentState.validate()) {
-            debugPrint(_titleController.text);
-            debugPrint(_noteController.text);
-            DateTime today = new DateTime.now();
-            String dateSlug =
-                "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
-          }*/ /*
-          */ /*else {
-            debugPrint("else");
-          }*/ /*
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        padding: EdgeInsets.all(0.0),
-        child: Ink(
-          decoration: BoxDecoration(
+  Widget buildButtonContainer() {
+    return Visibility(
+      visible: _isVisibleButton,
+      child: Container(
+        height: 56.0,
+        child: RaisedButton(
+          onPressed: () {
+            setState(() {
+              readableText = true;
+              _isVisibleButton = false;
+              editIcon = true;
+              deleteIcon = false;
+              //TODO: kayıt güncellenecek
+            });
+          },
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
-            gradient: LinearGradient(
-                colors: [Color(0xFF7e87d2), Color(0xFFe99fde)],
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft),
           ),
-          child: Center(
-            child: Text(
-              "Kaydet",
-              style: TextStyle(
-                  color: Color(0xFFFFFFFF),
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600),
+          padding: EdgeInsets.all(0.0),
+          child: Ink(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.0),
+                color: Colors.deepPurple),
+            child: Center(
+              child: Text(
+                "Kaydet",
+                style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ),
       ),
     );
-  }*/
+  }
 }
