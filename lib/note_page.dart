@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_fader/flutter_fader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:noteappfirebase/login_page.dart';
+import 'package:toast/toast.dart';
 import 'addnote_page.dart';
 import 'note_model_page.dart';
 import 'readnote_page.dart';
@@ -76,6 +78,39 @@ class NotePageState extends State<NotePage>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 10, top: 10),
+              child: Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_auth.currentUser() != null) {
+                        _auth.signOut().then((data) {
+                          /*Toast.show("Oturum kapatılıyor.", context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.BOTTOM);*/
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()));
+                          debugPrint("Çıkış yapıldı");
+                        }).catchError((onError) {
+                          debugPrint(
+                              "Çıkış yaparken bir hata oluştu. $onError");
+                        });
+                      } else {
+                        debugPrint("Kullanıcı yok.");
+                      }
+                    },
+                    child: Text(
+                      "Çıkış",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                          color: Colors.deepPurple),
+                    ),
+                  )),
+            ),
             Container(
               margin: EdgeInsets.only(left: 10, top: 10, bottom: 10),
               child: Text(

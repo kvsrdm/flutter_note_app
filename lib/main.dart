@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home:
-          SplashScreenPage(), //TODO: landing page eklenecek / 31. bölüm 214. ders
-      //TODO: Oturumu kapat
+      home: SplashScreenPage(),
     );
   }
 }

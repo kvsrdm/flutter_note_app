@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(height: 20),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SignUp()));
@@ -233,12 +233,15 @@ class _LoginPageState extends State<LoginPage> {
 
   void _userLogin(String email, String password) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email.trim(), password: password);
+      await _auth
+          .signInWithEmailAndPassword(email: email.trim(), password: password)
+          .then((v) async {
+        FirebaseUser user = await _auth.currentUser();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => NotePage(user: user)));
+      });
       //debugPrint("");
       //email.trim() maili girerken boşluk kullanırsan parçalayıp gözardı ediyor
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => NotePage()));
       //debugPrint("oldu");
     } catch (e) {
       Toast.show("Email veya şifre hatalı!", context,

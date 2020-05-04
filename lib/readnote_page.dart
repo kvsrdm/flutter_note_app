@@ -231,7 +231,8 @@ class _NoteReadState extends State<NoteRead> {
     });
   }
 
-  void _showDialog() {
+  Future<void> _showDialog() async {
+    FirebaseUser user = await _auth.currentUser();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -244,8 +245,10 @@ class _NoteReadState extends State<NoteRead> {
                 _deleteNoteFirebase();
                 Toast.show("Not listeden silindi.", context,
                     duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => NotePage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotePage(user: user)));
               },
             ),
             new FlatButton(

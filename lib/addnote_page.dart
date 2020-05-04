@@ -158,8 +158,8 @@ class _AddNoteState extends State<AddNote> {
           'title': noteModel.title,
           'note': noteModel.note
         }, merge: true)
-        .whenComplete(() => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => NotePage())))
+        .whenComplete(() => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => NotePage(user: user))))
         .catchError((onError) {
           debugPrint(onError);
           //Hide progress

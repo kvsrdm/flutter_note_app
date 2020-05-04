@@ -65,8 +65,8 @@ class _SignUpState extends State<SignUp> {
                 child: RaisedButton(
                   onPressed: () {
                     _UserSignUp(emailController.text, passwordController.text);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    /*Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));*/
                     Toast.show("Kullanıcı kaydı oluşturuldu.", context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
                     /*  if (confirmPasswordController.text ==
