@@ -73,8 +73,8 @@ class _SignUpState extends State<SignUp> {
                         passwordController.text) {
                       _UserSignUp(emailController.text, passwordController.text);
                     } else {
-                      debugPrint("Password uyuşmazlığı!");
-                      //TODO: bunun icin toast mesajı cıkarabilirsin
+                      Toast.show("Password uyuşmazlığı!", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                     }*/
                   },
                   shape: RoundedRectangleBorder(

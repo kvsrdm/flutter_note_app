@@ -159,8 +159,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             SizedBox(height: 20),
-
-                            //TODO: Sign up sayfasına git
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -244,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
       //debugPrint("oldu");
     } catch (e) {
       Toast.show("Email veya şifre hatalı!", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       debugPrint("bak gene hata " + e.toString());
     }
   }

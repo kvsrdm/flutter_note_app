@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:noteappfirebase/note_model_page.dart';
 import 'package:noteappfirebase/note_page.dart';
+import 'package:toast/toast.dart';
 
 class AddNote extends StatefulWidget {
   @override
@@ -15,65 +17,74 @@ class _AddNoteState extends State<AddNote> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool _saving = false;
+  bool _isAbsorbing = false;
+
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _noteController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          color: Color(0xFFfff),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 60, left: 30, right: 30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),
-                          hintText: 'Başlık',
+    return AbsorbPointer(
+      absorbing: _isAbsorbing,
+      child: Scaffold(
+        body: ModalProgressHUD(
+            child: SingleChildScrollView(
+              child: Container(
+                color: Color(0xFFfff),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 60, left: 30, right: 30),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _titleController,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black38, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black38, width: 1.0),
+                                ),
+                                hintText: 'Başlık',
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            TextFormField(
+                              controller: _noteController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 10,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black38, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black38, width: 1.0),
+                                ),
+                                hintText: 'Not',
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            buildButtonContainer(),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        controller: _noteController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 10,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1.0),
-                          ),
-                          hintText: 'Not',
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      buildButtonContainer(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+            inAsyncCall: _saving),
       ),
     );
   }
@@ -83,7 +94,12 @@ class _AddNoteState extends State<AddNote> {
       height: 56.0,
       child: RaisedButton(
         onPressed: () {
-          //TODO: Progress show
+          //Progress show
+
+          setState(() {
+            _saving = true;
+            _isAbsorbing = true;
+          });
 
           if (_formKey.currentState.validate()) {
             debugPrint(_titleController.text);
@@ -97,9 +113,6 @@ class _AddNoteState extends State<AddNote> {
                 note: _noteController.text,
                 date: dateSlug);
             _addNoteFirebase(noteModel);
-
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NotePage()));
           }
           /*else {
             debugPrint("else");
@@ -145,19 +158,13 @@ class _AddNoteState extends State<AddNote> {
           'title': noteModel.title,
           'note': noteModel.note
         }, merge: true)
-        .whenComplete(() => debugPrint(noteModel.title + ":D")
-            //TODO: navigaet to note list
-            //TODO: Show feedback
-            )
+        .whenComplete(() => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => NotePage())))
         .catchError((onError) {
           debugPrint(onError);
-          //TODO: Hide progress
+          //Hide progress
+          _saving = false;
+          _isAbsorbing = false;
         });
-
-///////////////////////
-
-    /*   DocumentSnapshot documentSnapshot =
-        await _firestore.document("users/$uid").get();
-    debugPrint("Ad : " + documentSnapshot.data['ad']);*/
   }
 }

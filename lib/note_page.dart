@@ -51,14 +51,12 @@ class NotePageState extends State<NotePage>
         break;
       case AppLifecycleState.detached:
         debugPrint("detached çalıştı");
-        // TODO: Handle this case.
         break;
     }
   }*/
 
   /* @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     debugPrint("Resume çalıştı");
     getList();
     super.didChangeDependencies();
@@ -84,8 +82,6 @@ class NotePageState extends State<NotePage>
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-
-                //Refresh listview
                 child: ListView.builder(
                   controller: _hideButtonController,
                   itemBuilder: (BuildContext context, int index) {

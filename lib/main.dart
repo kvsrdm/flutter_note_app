@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
       ),
       home: LoginPage(), //TODO: landing page eklenecek / 31. bölüm 214. ders
+      //TODO: Oturumu kapat
     );
   }
 }

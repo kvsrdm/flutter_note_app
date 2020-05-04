@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noteappfirebase/note_model_page.dart';
 import 'package:noteappfirebase/note_page.dart';
+import 'package:toast/toast.dart';
 
 class NoteRead extends StatefulWidget {
   final NoteModel noteModel;
 
   NoteRead(this.noteModel);
+
   final notePage = NotePageState();
 
   @override
@@ -86,7 +88,7 @@ class _NoteReadState extends State<NoteRead> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    //TODO: Delete button
+                                    _showDialog();
                                     //Alet dialog silmek istediğindn emin misin
                                     // delete databaseden
                                     //not sayfasına yönlendir
@@ -211,5 +213,50 @@ class _NoteReadState extends State<NoteRead> {
     }).then((v) {
       willUpdate = true;
     });
+  }
+
+  void _deleteNoteFirebase() async {
+    final FirebaseUser user = await _auth.currentUser();
+    final uid = user.uid;
+
+    final docRef = _firestore
+        .collection("users")
+        .document(uid)
+        .collection("Notes")
+        .document(widget.noteModel.id);
+
+    docRef.delete().then((v) {
+      willUpdate = true;
+      debugPrint("İstenilen veri silindi");
+    });
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: new Text("Notu silmek istediğinizden emin misiniz?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Evet"),
+              onPressed: () {
+                _deleteNoteFirebase();
+                Toast.show("Not listeden silindi.", context,
+                    duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NotePage()));
+              },
+            ),
+            new FlatButton(
+              child: new Text("İptal Et"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
