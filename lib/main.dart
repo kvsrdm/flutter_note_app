@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noteappfirebase/splashscreen_page.dart';
 import 'addnote_page.dart';
 import 'login_page.dart';
 import 'note_page.dart';
@@ -14,7 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: LoginPage(), //TODO: landing page eklenecek / 31. bölüm 214. ders
+      home:
+          SplashScreenPage(), //TODO: landing page eklenecek / 31. bölüm 214. ders
       //TODO: Oturumu kapat
     );
   }

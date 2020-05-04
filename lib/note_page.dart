@@ -9,6 +9,10 @@ import 'readnote_page.dart';
 import 'package:flutter/foundation.dart';
 
 class NotePage extends StatefulWidget {
+  final FirebaseUser user;
+
+  const NotePage({this.user});
+
   @override
   NotePageState createState() => NotePageState();
 }
@@ -16,6 +20,7 @@ class NotePage extends StatefulWidget {
 class NotePageState extends State<NotePage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   List<NoteModel> list = List();
+
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -138,8 +143,8 @@ class NotePageState extends State<NotePage>
   }
 
   getList() async {
-    final FirebaseUser user = await _auth.currentUser();
-    final uid = user.uid;
+    //final FirebaseUser user = await _auth.currentUser();
+    final uid = widget.user.uid;
     List<NoteModel> noteList = List();
 
     _firestore
