@@ -64,18 +64,19 @@ class _SignUpState extends State<SignUp> {
                 height: 56.0,
                 child: RaisedButton(
                   onPressed: () {
-                    _UserSignUp(emailController.text, passwordController.text);
-                    /*Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));*/
+                    //_userSignUp(emailController.text, passwordController.text);
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                     Toast.show("Kullanıcı kaydı oluşturuldu.", context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-                    /*  if (confirmPasswordController.text ==
+                    if (confirmPasswordController.text ==
                         passwordController.text) {
-                      _UserSignUp(emailController.text, passwordController.text);
+                      _userSignUp(
+                          emailController.text, passwordController.text);
                     } else {
                       Toast.show("Password uyuşmazlığı!", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                    }*/
+                          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                    }
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
@@ -108,13 +109,13 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void _UserSignUp(String email, String password) async {
+  void _userSignUp(String email, String password) async {
     var firebaseUser = await _auth
         .createUserWithEmailAndPassword(email: email.trim(), password: password)
         .catchError((e) => debugPrint("Hata: " + e.toString()));
 
     if (firebaseUser != null) {
-      debugPrint("Uid: ");
+      debugPrint("Uid: " + firebaseUser.user.uid);
     }
   }
 }

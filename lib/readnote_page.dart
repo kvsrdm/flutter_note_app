@@ -89,9 +89,6 @@ class _NoteReadState extends State<NoteRead> {
                                 onTap: () {
                                   setState(() {
                                     _showDialog();
-                                    //Alet dialog silmek istediğindn emin misin
-                                    // delete databaseden
-                                    //not sayfasına yönlendir
                                   });
                                 },
                                 child: Visibility(

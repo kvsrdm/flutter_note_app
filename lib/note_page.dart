@@ -3,12 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_fader/flutter_fader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:noteappfirebase/SpUtil.dart';
 import 'package:noteappfirebase/login_page.dart';
 import 'package:toast/toast.dart';
 import 'addnote_page.dart';
 import 'note_model_page.dart';
 import 'readnote_page.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 
 class NotePage extends StatefulWidget {
   final FirebaseUser user;
@@ -21,6 +23,7 @@ class NotePage extends StatefulWidget {
 
 class NotePageState extends State<NotePage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<NoteModel> list = List();
 
   final Firestore _firestore = Firestore.instance;
@@ -29,8 +32,40 @@ class NotePageState extends State<NotePage>
   ScrollController _hideButtonController;
   FaderController faderController = new FaderController();
 
+  Map noteFromCache;
+
+  NoteModel noteModel;
+
+/*  const _reviver(String key, value){
+    if(key != null && value is Map && key.contains("-")) {
+        return new NoteModel.fromJson(value);
+      }
+    return value;
+  }
+
+  const _toEncodable(NoteModel noteModel) {
+    return {'title': noteModel.title, 'note': noteModel.note};
+  }*/
+
   @override
   void initState() {
+    /* const jsonCodec = const JsonCodec(reviver: _reviver, toEncodable: _toEncodable);
+    var noteFromCacheString = SpUtil.getString("NOTE_CACHE");
+    noteFromCache = jsonCodec.decode(noteFromCacheString);*/
+
+    var noteFromCacheString = SpUtil.getString("NOTE_CACHE");
+    if (noteFromCacheString != null && noteFromCacheString.isNotEmpty) {
+      var note = jsonDecode(noteFromCacheString);
+      noteModel = new NoteModel.fromJson(note);
+      if (noteModel != null) {
+        new Future.delayed(Duration.zero, () {
+          showAlertDialog();
+        });
+      }
+    }
+
+    /* SpUtil.remove("NOTE_CACHE");*/
+
     list = List();
     getList();
     floatingActionButtonAnimation();
@@ -50,7 +85,7 @@ class NotePageState extends State<NotePage>
       case AppLifecycleState.resumed:
         */ /*getList();*/ /*
         break;
-      case AppLifecycleState.inactive:
+      case AppLifecycleState.inactive: //IOS
         debugPrint("inactive çalıştı");
         break;
       case AppLifecycleState.paused:
@@ -73,11 +108,18 @@ class NotePageState extends State<NotePage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            /*    RaisedButton(
+              onPressed: () {
+
+              },
+              child: Text('Show SnackBar'),
+            ),*/
             Container(
               margin: EdgeInsets.only(right: 10, top: 10),
               child: Align(
@@ -168,13 +210,26 @@ class NotePageState extends State<NotePage>
           child: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AddNote()));
+              openAddNotePage(null);
             },
           ),
         ),
       ),
     );
+  }
+
+  openAddNotePage(NoteModel noteModel) async {
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => noteModel == null
+                ? AddNote.name()
+                : AddNote.name(cachedNote: noteModel)));
+    debugPrint(result.toString());
+
+    if (result) {
+      getList();
+    }
   }
 
   getList() async {
@@ -225,5 +280,51 @@ class NotePageState extends State<NotePage>
     if (result) {
       getList();
     }
+  }
+
+  void showAlertDialog() {
+    showGeneralDialog(
+        /* barrierColor: Colors.black.withOpacity(0.5),*/
+        transitionBuilder: (context, a1, a2, widget) {
+          return Opacity(
+              opacity: a1.value,
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                actions: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text('Kaydedilmemiş notunuz var.'),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          NoteModel note = noteModel;
+                          openAddNotePage(note);
+
+                          SpUtil.remove("NOTE_CACHE");
+                          noteModel = null;
+                        },
+                        child: Text("Düzenle"),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          SpUtil.remove("NOTE_CACHE");
+                          noteModel = null;
+                          Navigator.pop(context);
+                        },
+                        child: Text("Atla"),
+                      ),
+                    ],
+                  )
+                ],
+              ));
+        },
+        transitionDuration: Duration(milliseconds: 200),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        // ignore: missing_return
+        pageBuilder: (context, animation1, animation2) {});
   }
 }

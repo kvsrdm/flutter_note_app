@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:toast/toast.dart';
+import 'SpUtil.dart';
 import 'note_page.dart';
 import 'signup_page.dart';
 
@@ -62,12 +63,12 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 hintText: 'Email',
                               ),
-                              /*validator: (value) {
+                              validator: (value) {
                                 if (value.isEmpty) {
                                   return 'E-mail is required';
                                 }
                                 return null;
-                              },*/
+                              },
                             ),
                             SizedBox(height: 20),
                             TextFormField(
@@ -88,12 +89,12 @@ class _LoginPageState extends State<LoginPage> {
                                         ? Icon(Icons.visibility)
                                         : Icon(Icons.visibility_off),
                                   )),
-                              /* validator: (value) {
+                              validator: (value) {
                                 if (value.length < 6) {
                                   return 'Password must be least 6 characters';
                                 }
                                 return null;
-                              },*/
+                              },
                               obscureText: passwordVisible,
                             ),
                             SizedBox(height: 20),
@@ -101,7 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                               padding: const EdgeInsets.all(4.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  debugPrint("Forgot :(");
+                                  debugPrint(
+                                      "Forgot :("); //TODO: forgot password
                                 },
                                 child: Row(
                                   children: <Widget>[
@@ -198,8 +200,8 @@ class _LoginPageState extends State<LoginPage> {
           if (_formKey.currentState.validate()) {
             debugPrint(_userEmailController.text);
             debugPrint(_userPasswordController.text);
-            //_userLogin(_userEmailController.text, _userPasswordController.text);
-            _userLogin("semra@gmail.com", "123456");
+            _userLogin(_userEmailController.text, _userPasswordController.text);
+            // _userLogin("semra@gmail.com", "123456");
           }
           /*else {
             debugPrint("else");
