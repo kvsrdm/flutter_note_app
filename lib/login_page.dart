@@ -167,7 +167,6 @@ class _LoginPageState extends State<LoginPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SignUp()));
-                                debugPrint("Sign up");
                               },
                               child: Container(
                                 child: Text(
@@ -201,11 +200,7 @@ class _LoginPageState extends State<LoginPage> {
             debugPrint(_userEmailController.text);
             debugPrint(_userPasswordController.text);
             _userLogin(_userEmailController.text, _userPasswordController.text);
-            // _userLogin("semra@gmail.com", "123456");
           }
-          /*else {
-            debugPrint("else");
-          }*/
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
@@ -242,13 +237,9 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => NotePage(user: user)));
       });
-      //debugPrint("");
-      //email.trim() maili girerken boşluk kullanırsan parçalayıp gözardı ediyor
-      //debugPrint("oldu");
     } catch (e) {
       Toast.show("Email veya şifre hatalı!", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      debugPrint("bak gene hata " + e.toString());
     }
   }
 }
