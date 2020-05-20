@@ -1,9 +1,16 @@
+
+### Video Demo
+  
+  ![Alt Text](https://media.giphy.com/media/SRMm2vmIolQ1OrY0zr/giphy.gif)
+
 ### Features
+
   - Log-in, Log-out, Register
   - Add, edit, delete note
   - Recover unsaved notes from the previous session using the local cache
 
 ### Dependencies
+
   -  flutter_custom_clippers: ^1.1.1
   -  firebase_auth: ^0.16.0
   -  cloud_firestore: ^0.13.5
@@ -13,8 +20,3 @@
   -  shared_preferences:
   -  synchronized:
   -  json_annotation : ^3.0.1 
-
-### Video Demo
-
-  
-  ![Alt Text](https://media.giphy.com/media/SRMm2vmIolQ1OrY0zr/giphy.gif)
