@@ -106,7 +106,7 @@ class _NoteReadState extends State<NoteRead> {
                           controller: _titleController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(width: 5.0),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             hintText: 'Başlık',
@@ -120,7 +120,7 @@ class _NoteReadState extends State<NoteRead> {
                           maxLines: 10,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(width: 5.0),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             hintText: 'Not',
@@ -158,7 +158,7 @@ class _NoteReadState extends State<NoteRead> {
                   debugPrint(_noteController.text);
                   DateTime today = new DateTime.now();
                   String dateSlug =
-                      "${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+                      "${today.day.toString()}/${today.month.toString().padLeft(2, '0')}/${today.year.toString().padLeft(2, '0')}-${today.hour.toString().padLeft(2, '0')}/${today.minute.toString().padLeft(2, '0')}/${today.second.toString().padLeft(2, '0')}";
 
                   NoteModel noteModel = NoteModel(
                       title: _titleController.text,

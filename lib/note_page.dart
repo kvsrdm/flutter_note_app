@@ -36,6 +36,9 @@ class NotePageState extends State<NotePage>
 
   NoteModel noteModel;
 
+  List<String> _sortList = ['Alfabetik', 'Önce En Yeni', 'Önce En Eski'];
+  String _selectedItem;
+
 /*  const _reviver(String key, value){
     if(key != null && value is Map && key.contains("-")) {
         return new NoteModel.fromJson(value);
@@ -115,9 +118,7 @@ class NotePageState extends State<NotePage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             /*    RaisedButton(
-              onPressed: () {
-
-              },
+              onPressed: () {},
               child: Text('Show SnackBar'),
             ),*/
             Container(
@@ -153,53 +154,86 @@ class NotePageState extends State<NotePage>
                     ),
                   )),
             ),
-            Container(
-              margin: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-              child: Text(
-                "Notlar",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
-              ),
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                  child: Text(
+                    "Notlar",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  margin: EdgeInsets.only(right: 10, top: 10, bottom: 10),
+                  child: DropdownButton(
+                    hint: Text('Sıralama'), // Not necessary for Option 1
+                    value: _selectedItem,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedItem = newValue;
+                        if (_selectedItem == _sortList[0]) {
+                          sortListString(list);
+                        } else if (_selectedItem == _sortList[1]) {
+                          sortListDateNew(list);
+                        } else if (_selectedItem == _sortList[2]) {
+                          sortListDateOld(list);
+                        }
+                      });
+                    },
+                    items: _sortList.map((location) {
+                      return DropdownMenuItem(
+                        child: new Text(location),
+                        value: location,
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             Expanded(
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                child: ListView.builder(
-                  controller: _hideButtonController,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      height: 120,
-                      child: GestureDetector(
-                        onTap: () {
-                          moveToNote(index);
+                child: list.isEmpty
+                    ? _emptyState()
+                    : ListView.builder(
+                        controller: _hideButtonController,
+                        itemBuilder: (BuildContext context, int index) {
+                          debugPrint("Liste bos değil");
+                          return Container(
+                            height: 120,
+                            child: GestureDetector(
+                              onTap: () {
+                                moveToNote(index);
+                              },
+                              child: Card(
+                                semanticContainer: true,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                elevation: 5,
+                                margin: EdgeInsets.all(10),
+                                color: Color(0xFFf7f7f7),
+                                child: Row(
+                                  children: <Widget>[
+                                    SizedBox(width: 15),
+                                    Icon(Icons.note, color: Colors.deepPurple),
+                                    Spacer(),
+                                    Text(list[index].title),
+                                    Spacer(),
+                                    Text(list[index].date.split('-')[0]),
+                                    SizedBox(width: 15),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
                         },
-                        child: Card(
-                          semanticContainer: true,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          elevation: 5,
-                          margin: EdgeInsets.all(10),
-                          color: Color(0xFFf7f7f7),
-                          child: Row(
-                            children: <Widget>[
-                              SizedBox(width: 15),
-                              Icon(Icons.note, color: Colors.deepPurple),
-                              Spacer(),
-                              Text(list[index].title),
-                              Spacer(),
-                              Text(list[index].date),
-                              SizedBox(width: 15),
-                            ],
-                          ),
-                        ),
+                        itemCount: list == null ? 0 : list.length,
+                        // itemCount: list.length = 2,
                       ),
-                    );
-                  },
-                  itemCount: list == null ? 0 : list.length,
-                  // itemCount: list.length = 2,
-                ),
               ),
             ),
           ],
@@ -254,8 +288,27 @@ class NotePageState extends State<NotePage>
 
       setState(() {
         list = noteList;
+        sortListDateNew(list);
       });
     });
+  }
+
+  sortListDateNew(List<NoteModel> list) {
+    //yeniden eski tarihe göre sıralama işlemi
+    list.sort((a, b) => b.date.toString().compareTo(a.date.toString()));
+  }
+
+  sortListDateOld(List<NoteModel> list) {
+    //eskiden yeni tarihe göre sıralama işlemi
+    list.sort((a, b) => a.date.toString().compareTo(b.date.toString()));
+  }
+
+  sortListString(List<NoteModel> list) {
+    //title'a göre alfabetik sıralama işlemi
+    list.sort((a, b) => a.title
+        .toString()
+        .toLowerCase()
+        .compareTo(b.title.toString().toLowerCase()));
   }
 
   void floatingActionButtonAnimation() {
@@ -326,5 +379,32 @@ class NotePageState extends State<NotePage>
         context: context,
         // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
+  }
+
+  _emptyState() {
+    debugPrint("Liste bos");
+    return Center(
+      child: Container(
+        height: 150,
+        child: Column(
+          children: <Widget>[
+            Container(
+              /*child: Image(image: AssetImage('assets/images/note.png')),*/
+              width: 75,
+              height: 75,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/images/note.png'))),
+            ),
+            SizedBox(height: 10),
+            Text("Henüz not eklemedin", style: TextStyle(fontSize: 18)),
+            SizedBox(height: 5),
+            Text("Ekle butonuna basarak yeni not ekleyebilirsin.",
+                style: TextStyle(fontSize: 14)),
+          ],
+        ),
+      ),
+    );
   }
 }
