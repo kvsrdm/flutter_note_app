@@ -42,7 +42,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       },
     );*/
     return Scaffold(
-      body: Text("ne"),
+      body: Center(child: Text("LOGO")),
     );
   }
 
