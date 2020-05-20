@@ -8,6 +8,13 @@
   - Log-in, Log-out, Register
   - Add, edit, delete note
   - Recover unsaved notes from the previous session using the local cache
+  - Sorting notes by creation date or alphabetically
+  
+### Roadmap
+  
+  - Sharing notes [in development]
+  - Dark theme [pending]
+  - Favorite notes [pending]
 
 ### Dependencies
 
