@@ -42,7 +42,12 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       },
     );*/
     return Scaffold(
-      body: Center(child: Text("LOGO")),
+      body: Center(
+          child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.white,
+      )),
     );
   }
 
@@ -53,7 +58,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       redirectToLogin = user != null && user.uid != null && user.uid.isNotEmpty;
 
       if (user != null) {
-        debugPrint("e buraya girdi");
         /*return NotePage();*/
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => NotePage(user: user)));

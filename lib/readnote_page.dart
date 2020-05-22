@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noteappfirebase/note_model_page.dart';
 import 'package:noteappfirebase/note_page.dart';
+import 'package:share/share.dart';
 import 'package:toast/toast.dart';
 
 class NoteRead extends StatefulWidget {
@@ -66,36 +67,54 @@ class _NoteReadState extends State<NoteRead> {
                       children: <Widget>[
                         Container(
                           alignment: Alignment.topRight,
-                          child: Stack(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    readableText = false;
-                                    _isVisibleButton = true;
-                                    editIcon = false;
-                                    deleteIcon = true;
+                                    //Share
+                                    share(_titleController.text,
+                                        _noteController.text);
                                   });
-                                  debugPrint("düzenleme aktif");
                                 },
-                                child: Visibility(
-                                  visible: editIcon,
-                                  child: Icon(Icons.edit,
-                                      size: 30, color: Colors.deepPurple),
-                                ),
+                                child: Icon(Icons.share,
+                                    size: 30, color: Colors.deepPurple),
                               ),
                               SizedBox(width: 30),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _showDialog();
-                                  });
-                                },
-                                child: Visibility(
-                                  visible: deleteIcon,
-                                  child: Icon(Icons.delete,
-                                      size: 30, color: Colors.deepPurple),
-                                ),
+                              Stack(
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        readableText = false;
+                                        _isVisibleButton = true;
+                                        editIcon = false;
+                                        deleteIcon = true;
+                                      });
+                                      debugPrint("düzenleme aktif");
+                                    },
+                                    child: Visibility(
+                                      visible: editIcon,
+                                      child: Icon(Icons.edit,
+                                          size: 30, color: Colors.deepPurple),
+                                    ),
+                                  ),
+                                  SizedBox(width: 30),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _showDialog();
+                                      });
+                                    },
+                                    child: Visibility(
+                                      visible: deleteIcon,
+                                      child: Icon(Icons.delete,
+                                          size: 30, color: Colors.deepPurple),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -258,5 +277,10 @@ class _NoteReadState extends State<NoteRead> {
         );
       },
     );
+  }
+
+  void share(String title, String content) {
+    final String text = "$title - $content";
+    Share.share(text, subject: content);
   }
 }
