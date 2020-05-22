@@ -12,8 +12,7 @@
   
 ### Roadmap
   
-  - Sharing notes [in development]
-  - Dark theme [pending]
+  - Dark theme [in development]
   - Favorite notes [pending]
 
 ### Dependencies
@@ -26,4 +25,5 @@
   -  modal_progress_hud: ^0.1.3
   -  shared_preferences:
   -  synchronized:
-  -  json_annotation : ^3.0.1 
+  -  json_annotation : ^3.0.1
+  -  share: ^0.6.4+3
