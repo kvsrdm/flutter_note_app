@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613604522681:android:d662c8858b7d3995877968",
+        "android_client_info": {
+          "package_name": "com.kvsr.noteappfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613604522681-enn9kvm0l6tcrjai5m5rk876jj6reenj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcgyNDH0L7M0hwbySS3U6dBlHf3kMJGXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613604522681-enn9kvm0l6tcrjai5m5rk876jj6reenj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
