@@ -11,6 +11,7 @@ import 'dart:convert';
 
 class AddNote extends StatefulWidget {
   final NoteModel cachedNote;
+
   AddNote.name({this.cachedNote});
 
   @override
@@ -20,6 +21,8 @@ class AddNote extends StatefulWidget {
 class _AddNoteState extends State<AddNote> with WidgetsBindingObserver {
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  NoteModel noteModel;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -33,6 +36,8 @@ class _AddNoteState extends State<AddNote> with WidgetsBindingObserver {
 
   bool isForceClosed = true;
   bool willUpdate = false;
+
+  bool favorite = false;
 
   @override
   void dispose() {
@@ -100,6 +105,41 @@ class _AddNoteState extends State<AddNote> with WidgetsBindingObserver {
                           key: _formKey,
                           child: Column(
                             children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        favorite = !favorite;
+                                        debugPrint(
+                                            "Favoriler " + favorite.toString());
+                                        if (favorite == true) {
+                                          Toast.show(
+                                              "Not favorilerine eklendi.",
+                                              context,
+                                              duration: Toast.LENGTH_LONG,
+                                              gravity: Toast.BOTTOM);
+                                        } else {
+                                          Toast.show(
+                                              "Not favorilerinden kaldırıldı.",
+                                              context,
+                                              duration: Toast.LENGTH_LONG,
+                                              gravity: Toast.BOTTOM);
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                        child: Icon(
+                                      favorite ? Icons.star : Icons.star_border,
+                                      color: Colors.amber,
+                                      size: 36,
+                                    )),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
                               TextFormField(
                                 controller: _titleController,
                                 decoration: InputDecoration(
@@ -168,7 +208,8 @@ class _AddNoteState extends State<AddNote> with WidgetsBindingObserver {
             NoteModel noteModel = NoteModel(
                 title: _titleController.text,
                 note: _noteController.text,
-                date: dateSlug);
+                date: dateSlug,
+                favorite: favorite);
             _addNoteFirebase(noteModel);
           }
           /*else {
@@ -212,7 +253,8 @@ class _AddNoteState extends State<AddNote> with WidgetsBindingObserver {
       'id': docRef.documentID,
       'date': noteModel.date,
       'title': noteModel.title,
-      'note': noteModel.note
+      'note': noteModel.note,
+      'favorite': noteModel.favorite,
     }, merge: true).then((v) {
       willUpdate = true;
       Navigator.pop(context, willUpdate);

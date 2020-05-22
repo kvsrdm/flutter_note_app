@@ -7,8 +7,9 @@ class NoteModel {
   String title;
   String note;
   String date;
+  bool favorite = false;
 
-  NoteModel({this.id, this.title, this.note, this.date});
+  NoteModel({this.id, this.title, this.note, this.date, this.favorite});
 
   factory NoteModel.fromJson(Map<String, dynamic> parsedJson) {
     return NoteModel(

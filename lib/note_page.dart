@@ -223,7 +223,34 @@ class NotePageState extends State<NotePage>
                                     Spacer(),
                                     Text(list[index].title),
                                     Spacer(),
+                                    SizedBox(width: 15),
                                     Text(list[index].date.split('-')[0]),
+                                    SizedBox(width: 15),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _updateNote(!list[index].favorite,
+                                            list[index].id);
+                                        if (list[index].favorite == false) {
+                                          Toast.show(
+                                              "Not favorilerine eklendi.",
+                                              context,
+                                              duration: Toast.LENGTH_LONG,
+                                              gravity: Toast.BOTTOM);
+                                        } else {
+                                          Toast.show(
+                                              "Not favorilerinden kaldırıldı.",
+                                              context,
+                                              duration: Toast.LENGTH_LONG,
+                                              gravity: Toast.BOTTOM);
+                                        }
+                                      },
+                                      child: Container(
+                                          child: Icon(
+                                              list[index].favorite
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              color: Colors.amber)),
+                                    ),
                                     SizedBox(width: 15),
                                   ],
                                 ),
@@ -268,12 +295,12 @@ class NotePageState extends State<NotePage>
 
   getList() async {
     //final FirebaseUser user = await _auth.currentUser();
-    final uid = widget.user.uid;
+
     List<NoteModel> noteList = List();
 
     _firestore
         .collection("users")
-        .document(uid)
+        .document(widget.user.uid)
         .collection("Notes")
         .getDocuments()
         .then((querySnapshots) {
@@ -282,7 +309,8 @@ class NotePageState extends State<NotePage>
             id: querySnapshots.documents[i].data['id'].toString(),
             title: querySnapshots.documents[i].data['title'].toString(),
             note: querySnapshots.documents[i].data['note'].toString(),
-            date: querySnapshots.documents[i].data['date'].toString());
+            date: querySnapshots.documents[i].data['date'].toString(),
+            favorite: querySnapshots.documents[i].data['favorite'] as bool);
         noteList.add(titleDate);
       }
 
@@ -406,5 +434,21 @@ class NotePageState extends State<NotePage>
         ),
       ),
     );
+  }
+
+  void _updateNote(bool favorite, var noteId) {
+    final docRef = _firestore
+        .collection("users")
+        .document(widget.user.uid)
+        .collection("Notes")
+        .document(noteId);
+
+    docRef.updateData({
+      'favorite': favorite,
+    }).then((v) {
+      setState(() {
+        getList();
+      });
+    });
   }
 }

@@ -9,11 +9,13 @@
   - Add, edit, delete note
   - Recover unsaved notes from the previous session using the local cache
   - Sorting notes by creation date or alphabetically
+  - Favorite notes
+  - Share notes
   
 ### Roadmap
   
   - Dark theme [in development]
-  - Favorite notes [pending]
+  - Forgot password [pending]
 
 ### Dependencies
 

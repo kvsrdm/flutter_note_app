@@ -35,6 +35,8 @@ class _NoteReadState extends State<NoteRead> {
 
   bool willUpdate = false;
 
+  bool favorite = false;
+
   @override
   void initState() {
     _titleController.text = widget.noteModel.title;
@@ -71,6 +73,35 @@ class _NoteReadState extends State<NoteRead> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
+                              Visibility(
+                                visible: deleteIcon,
+                                child: Container(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        widget.noteModel.favorite =
+                                            !widget.noteModel.favorite;
+                                        Toast.show(
+                                            widget.noteModel.favorite
+                                                ? "Not favorilere eklendi."
+                                                : "Not favorilerinden kaldırıldı.",
+                                            context,
+                                            duration: Toast.LENGTH_LONG,
+                                            gravity: Toast.BOTTOM);
+                                      });
+                                    },
+                                    child: Container(
+                                        child: Icon(
+                                      widget.noteModel.favorite
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color: Colors.amber,
+                                      size: 36,
+                                    )),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 30),
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -182,7 +213,8 @@ class _NoteReadState extends State<NoteRead> {
                   NoteModel noteModel = NoteModel(
                       title: _titleController.text,
                       note: _noteController.text,
-                      date: dateSlug);
+                      date: dateSlug,
+                      favorite: widget.noteModel.favorite);
                   _updateNoteFirebase(noteModel);
                 }
               });
@@ -225,7 +257,8 @@ class _NoteReadState extends State<NoteRead> {
       'id': _id,
       'date': noteModel.date,
       'title': noteModel.title,
-      'note': noteModel.note
+      'note': noteModel.note,
+      'favorite': noteModel.favorite
     }).then((v) {
       willUpdate = true;
     });
