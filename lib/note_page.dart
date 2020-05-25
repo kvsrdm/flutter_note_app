@@ -230,23 +230,11 @@ class NotePageState extends State<NotePage>
               ),
               Expanded(
                 child: Container(
-                  height: _height,
-                  padding: EdgeInsets.all(10),
-                  margin: EdgeInsets.only(bottom: 20.0),
-                  child: NativeAdmob(
-                    adUnitID: _adUnitID,
-                    controller: _nativeAdController,
-                    loading: Container(),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: list.isEmpty
                       ? _emptyState()
-                      : ListView.builder(
+                      : ListView.separated(
                           controller: _hideButtonController,
                           itemBuilder: (BuildContext context, int index) {
                             debugPrint("Liste bos değil");
@@ -307,6 +295,23 @@ class NotePageState extends State<NotePage>
                                 ),
                               ),
                             );
+                          },
+
+                          separatorBuilder: (BuildContext context, int index) {
+                            if (index != 0 && index % 5 == 0) {
+                              return Container(
+                                height: _height,
+                                padding: EdgeInsets.all(10),
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                child: NativeAdmob(
+                                  adUnitID: _adUnitID,
+                                  controller: _nativeAdController,
+                                  loading: Container(),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
                           },
                           itemCount: list == null ? 0 : list.length,
                           // itemCount: list.length = 2,
