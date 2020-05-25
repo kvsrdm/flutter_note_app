@@ -11,6 +11,7 @@
   - Sorting notes by creation date or alphabetically
   - Favorite notes
   - Share notes
+  - Native ad
   
 ### Roadmap
   
@@ -29,3 +30,4 @@
   -  synchronized:
   -  json_annotation : ^3.0.1
   -  share: ^0.6.4+3
+  -  flutter_native_admob: ^2.1.0
