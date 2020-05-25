@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_fader/flutter_fader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -299,14 +300,30 @@ class NotePageState extends State<NotePage>
 
                           separatorBuilder: (BuildContext context, int index) {
                             if (index != 0 && index % 5 == 0) {
-                              return Container(
-                                height: _height,
-                                padding: EdgeInsets.all(10),
-                                margin: EdgeInsets.only(bottom: 20.0),
-                                child: NativeAdmob(
-                                  adUnitID: _adUnitID,
-                                  controller: _nativeAdController,
-                                  loading: Container(),
+                              return Card(
+                                semanticContainer: true,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                elevation: 5,
+                                margin: EdgeInsets.all(10),
+                                color: Color(0xFFf7f7f7),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        height: _height,
+                                        padding: EdgeInsets.all(10),
+                                        margin: EdgeInsets.only(bottom: 5.0),
+                                        child: NativeAdmob(
+                                          adUnitID: _adUnitID,
+                                          controller: _nativeAdController,
+                                          loading: Container(),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             } else {
